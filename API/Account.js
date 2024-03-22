@@ -23,16 +23,41 @@ uri.post("/SignUp", async (req, res) => {
 });
 
 uri.post("/SignIn", async (req, res) => {
-  const User = await Account.findOne({ Email:  req.body.Email});
+  const User = await Account.findOne({ Email: req.body.Email });
   if (!User) {
-    return res.json({ Status: "Wrong Email" });
+    res.json({ Status: "Wrong Email" });
   } else {
-    const isPasswordValid = await ComparePassword( req.body.Password, User.Password);
+    const isPasswordValid = await ComparePassword(
+      req.body.Password,
+      User.Password
+    );
     if (isPasswordValid) {
-      return res.json({ Status: "Success" });
+      res.json(User);
     } else {
-      return res.json({ Status: "Wrong Password" });
+      res.json({ Status: "Wrong Password" });
     }
+  }
+});
+
+uri.post("/GetAccount", async (req, res) => {
+  if (req.body.Email !== "") {
+    const User = await Account.findOne({ Email: req.body.Email });
+    if (User.Password === req.body.Password) {
+      res.json(User);
+    } else {
+      res.json({ Status: "Fauld" });
+    }
+  } else {
+    res.json({ Status: "Fauld" });
+  }
+});
+
+uri.post("/CheckEmail", async (req, res) => {
+  const User = await Account.findOne({ Email: req.body.Email });
+  if (User) {
+    res.json({ Status: "Fauld" });
+  } else {
+    res.json({ Status: "Success" });
   }
 });
 
