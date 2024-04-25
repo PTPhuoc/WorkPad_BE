@@ -1,8 +1,6 @@
 const uri = require("express").Router();
 const bcrypt = require("bcrypt");
 const Account = require("../Model/AccountModel.js");
-const nodemailer = require("nodemailer");
-const AccountModel = require("../Model/AccountModel.js");
 
 const HashPassword = async (Password) => {
   const Hash = await bcrypt.hash(Password, 10);
@@ -20,6 +18,7 @@ uri.post("/SignUp", async (req, res) => {
       Name: req.body.Name,
       Email: req.body.Email,
       Password: await HashPassword(req.body.Password),
+      Type: req.body.Type,
     });
     await NewAccount.save();
     res.send(NewAccount);
@@ -44,6 +43,17 @@ uri.post("/SignIn", async (req, res) => {
         res.json({ Status: "Wrong Password" });
       }
     }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+uri.post("/ChangeName", async (req, res) => {
+  try {
+    await Account.findByIdAndUpdate(req.body._id, {
+      $set: { Name: req.body.Ten },
+    });
+    res.send({ Status: "Success" });
   } catch (err) {
     console.log(err);
   }
@@ -81,7 +91,7 @@ uri.post("/CheckEmail", async (req, res) => {
 
 uri.post("/ChangePassword", async (req, res) => {
   try {
-    await AccountModel.findOneAndUpdate(
+    await Account.findOneAndUpdate(
       { Email: req.body.Email },
       { $set: { Password: await HashPassword(req.body.Password) } }
     );
@@ -123,13 +133,13 @@ uri.post("/SendCode", async (req, res) => {
   });
 });
 
-uri.post("/GetTrueAccount",  async (req, res)=> {
+uri.post("/GetTrueAccount", async (req, res) => {
   try {
-    const Account = await AccountModel.findOne({Email: req.body.Email})
-    res.send(Account)
+    const Account = await Account.findOne({ Email: req.body.Email });
+    res.send(Account);
   } catch (err) {
     console.log(err);
   }
-})
+});
 
 module.exports = uri;

@@ -14,6 +14,10 @@ const AccountSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    Type: {
+        type: String,
+        default: "Normal"
+    }
 })
 
 module.exports = mongoose.model('Account', AccountSchema, 'Account');
