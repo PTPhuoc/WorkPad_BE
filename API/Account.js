@@ -1,6 +1,7 @@
 const uri = require("express").Router();
 const bcrypt = require("bcrypt");
 const Account = require("../Model/AccountModel.js");
+const nodemailer = require("nodemailer")
 
 const HashPassword = async (Password) => {
   const Hash = await bcrypt.hash(Password, 10);
