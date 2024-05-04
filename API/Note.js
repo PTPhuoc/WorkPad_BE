@@ -15,7 +15,7 @@ uri.post("/SaveNote", async (req, res) => {
     });
     const saveNote = await newNote.save();
     if (saveNote) {
-      res.json({ Status: "Success" });
+      res.json({ Status: "Success", _id: saveNote._id });
     } else {
       res.json({ Status: "Error" });
     }

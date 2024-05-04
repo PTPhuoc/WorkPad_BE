@@ -91,11 +91,17 @@ uri.post("/CheckEmail", async (req, res) => {
 
 uri.post("/ChangePassword", async (req, res) => {
   try {
-    await Account.findOneAndUpdate(
-      { Email: req.body.Email },
-      { $set: { Password: await HashPassword(req.body.Password) } }
-    );
-    res.send({ Status: "Success" });
+    const User = await Account.findById(req.body._id);
+    const Status = await ComparePassword(req.body.OldPassword, User.Password)
+    if (Status) {
+      const NewPass = await HashPassword(req.body.Password);
+      await Account.findByIdAndUpdate(req.body._id, {
+        $set: { Password:  NewPass},
+      });
+      res.send({ Status: "Success", Password: NewPass });
+    } else {
+      res.send({ Status: "Fauld" });
+    }
   } catch (err) {
     console.log(err);
   }
@@ -135,8 +141,8 @@ uri.post("/SendCode", async (req, res) => {
 
 uri.post("/GetTrueAccount", async (req, res) => {
   try {
-    const Account = await Account.findOne({ Email: req.body.Email });
-    res.send(Account);
+    const User = await Account.findOne({ Email: req.body.Email });
+    res.send(User);
   } catch (err) {
     console.log(err);
   }
