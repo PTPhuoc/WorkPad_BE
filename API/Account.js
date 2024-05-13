@@ -90,6 +90,15 @@ uri.post("/CheckEmail", async (req, res) => {
   }
 });
 
+uri.post("/ChangePasswordWithCode", async (req, res) => {
+  try {
+    await Account.findOneAndUpdate({Email: req.body.Email},{$set: {Password: await HashPassword(req.body.Password)}})
+    res.send({Status: "Success"})
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 uri.post("/ChangePassword", async (req, res) => {
   try {
     const User = await Account.findById(req.body._id);
